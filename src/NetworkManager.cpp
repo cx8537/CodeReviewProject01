@@ -7,6 +7,7 @@
 MR 생성을 위한 테스트 
 */
 
+
 NetworkManager::NetworkManager()
     : m_connected(false)
     , m_serverAddress("")
