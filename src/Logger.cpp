@@ -3,14 +3,23 @@
 #include <ctime>
 #include <iomanip>
 #include <sstream>
+#include <mutex> // 멀티스레드 환경 대비
 
 namespace {
     AppLog::Level g_minLevel = AppLog::Level::Debug;
+    std::mutex g_logMutex; // 출력 섞임 방지
 
     std::string getCurrentTimestamp()
     {
         std::time_t now = std::time(nullptr);
-        std::tm* localTime = std::localtime(&now);
+        std::tm localTime = {};
+        
+        // 플랫폼 호환 스레드 안전 시간 변환
+        #if defined(_WIN32) || defined(_WIN64)
+            localtime_s(&localTime, &now);
+        #else
+            localtime_r(&now, &localTime);
+        #endif
 
         std::ostringstream oss;
         oss << std::put_time(localTime, "%Y-%m-%d %H:%M:%S");
@@ -34,6 +43,8 @@ namespace {
             return;
         }
 
+        // 스레드 안전한 출력을 위해 뮤텍스 사용
+        std::lock_guard<std::mutex> lock(g_logMutex);
         std::cout << "[" << getCurrentTimestamp() << "] "
                   << "[" << levelToString(level) << "] "
                   << "[" << module << "] "

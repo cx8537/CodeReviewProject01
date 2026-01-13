@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <algorithm>
+#include <stdexcept> // 예외 처리를 위해 추가
 
 bool Config::s_loaded = false;
 std::map<std::string, std::string> Config::s_serverIPs;
@@ -60,7 +61,11 @@ bool Config::load(const std::string& configPath)
         }
         else if (currentSection == "Limits") {
             if (key == "MaxRetryCount") {
-                s_maxRetryCount = std::stoi(value);
+                try {
+                    s_maxRetryCount = std::stoi(value);
+                } catch (const std::exception& e) {
+                    AppLog::warning("Config", "Invalid format for MaxRetryCount. Using default.");
+                }
             }
         }
     }

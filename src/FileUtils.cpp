@@ -57,9 +57,20 @@ bool FileUtils::readBinaryFile(const std::string& path, std::vector<uint8_t>& ou
     }
 
     std::streamsize size = file.tellg();
+    if (size < 0) { // tellg 실패 체크 추가
+        AppLog::error("FileUtils", "Failed to get file size.");
+        return false;
+    }
+
     file.seekg(0, std::ios::beg);
 
     outData.resize(static_cast<size_t>(size));
+    
+    // 파일 크기가 0인 경우 읽기 시도 없이 성공 처리
+    if (size == 0) {
+        return true;
+    }
+
     if (!file.read(reinterpret_cast<char*>(outData.data()), size)) {
         AppLog::error("FileUtils", "Failed to read file.");
         return false;
@@ -80,6 +91,10 @@ bool FileUtils::directoryExists(const std::string& path)
 
 uint32_t FileUtils::calculateCRC32(const uint8_t* data, size_t size)
 {
+    if (!data && size > 0) { // 데이터 포인터 유효성 검사 추가
+        return 0;
+    }
+
     // CRC-32 lookup table (IEEE 802.3 polynomial)
     static const uint32_t crcTable[256] = {
         0x00000000, 0x77073096, 0xEE0E612C, 0x990951BA, 0x076DC419, 0x706AF48F,
