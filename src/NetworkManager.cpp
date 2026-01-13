@@ -1,12 +1,11 @@
 #include "NetworkManager.h"
 #include "Config.h"
 #include "Logger.h"
-#include <cstring>
+// <cstring> 제거: 사용되지 않음
 
 /*
 MR 생성을 위한 테스트 
 */
-
 
 NetworkManager::NetworkManager()
     : m_connected(false)
@@ -17,6 +16,7 @@ NetworkManager::NetworkManager()
 
 NetworkManager::~NetworkManager()
 {
+    // 소멸자에서는 예외가 발생하지 않도록 주의하며 연결 해제
     if (m_connected) {
         disconnect();
     }
@@ -63,7 +63,6 @@ int NetworkManager::sendPayload(const LogPayload& payload)
     }
 
     // Simulate sending data
-    // In real implementation, this would send data through socket
     AppLog::info("NetworkManager", "Payload sent successfully.");
     return GameConstants::SEND_SUCCESS;
 }
