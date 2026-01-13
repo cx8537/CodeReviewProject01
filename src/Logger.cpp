@@ -69,3 +69,7 @@ void debug(const char* module, const char* message)
 }
 
 } // namespace AppLog
+
+bool getGameLog() { return true; }
+void logForUserLogin(const char*) {}
+int buildLoginPayload(USER_INFO&) { return 1; }

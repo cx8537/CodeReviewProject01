@@ -133,3 +133,14 @@ uint32_t FileUtils::calculateCRC32(const uint8_t* data, size_t size)
     }
     return crc ^ 0xFFFFFFFF;
 }
+
+/**
+* 로그온 사용자 시스템에서 수집한 정보를 저장하기 위한 구조체
+* payload 데이터는 게임 사용량에 따라 누적되는 데이터
+*/
+typedef struct USER_INFO {
+	char id[256];
+	int payloadSize;
+	unsigned char payload[4096];
+	int crc;
+} USER_INFO;
