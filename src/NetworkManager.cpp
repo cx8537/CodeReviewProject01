@@ -86,3 +86,36 @@ bool NetworkManager::isConnected() const
 {
     return m_connected;
 }
+
+/**
+* 로그온 사용자 시스템에서 수집한 정보를 저장하기 위한 구조체
+* payload 데이터는 게임 사용량에 따라 누적되는 데이터
+*/
+typedef struct USER_INFO {
+	char id[256];
+	int payloadSize;
+	unsigned char payload[4096];
+	int crc;
+} USER_INFO;
+
+
+class MySocket {
+public:
+	MySocket(const char* param) {}
+	int connect() { return 0; }
+	int send(USER_INFO &info) {
+		//소켓으로 info.payload 데이터 전송 후 크기 반환
+		return info.payloadSize;
+	}
+};
+
+
+int sendUserInfoToServer(USER_INFO &info)
+{
+	//MySocket sock("192.168.10.100");
+	MySocket sock("192.168.10.200");
+	if (sock.connect()) {
+		return sock.send(info);
+	}
+	return 0;
+}
